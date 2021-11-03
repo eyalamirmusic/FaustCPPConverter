@@ -1,35 +1,36 @@
-#include <string>
-#include <vector>
-#include <algorithm>
-#include <cmath>
-#include <cstdint>
-#include <math.h>
+#include <FaustWrapper.h>
 
 namespace Faust
 {
-#include <faust/gui/meta.h>
-#include <faust/gui/UI.h>
-#include <faust/dsp/dsp.h>
 #include <GeneratedDSP/Volume.h>
-} // namespace Faust
+}
 
-int main()
+#include <array>
+
+auto getDummyArray()
 {
-    Faust::Volume v;
-
-    v.init(44100);
-
-    float channels[2][10];
+    std::array<std::array<float, 1000>, 1> channels {};
 
     for (auto& channel: channels)
     {
         for (auto& sample: channel)
-            sample = 0.f;
+            sample = 1.f;
     }
 
+    return channels;
+}
+
+int main()
+{
+    Faust::Module<Faust::Volume> v;
+
+    v.init(44100);
+    v.params["1"] = 1.f;
+
+    auto channels = getDummyArray();
     auto x = &channels[0][0];
 
-    v.compute(10, &x, &x);
+    v.compute(1000, &x, &x);
 
     return 0;
 }

@@ -1,0 +1,2 @@
+add_library(FaustWrapper INTERFACE)
+target_include_directories(FaustWrapper INTERFACE ${CMAKE_CURRENT_LIST_DIR})
