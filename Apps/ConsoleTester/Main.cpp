@@ -3,13 +3,17 @@
 namespace Faust
 {
 #include <GeneratedDSP/Volume.h>
-}
+#include <GeneratedDSP/Distortion.h>
+} // namespace Faust
 
 #include <array>
 
+constexpr int bufferSize = 1000;
+constexpr int sampleRate = 44100;
+
 auto getDummyArray()
 {
-    std::array<std::array<float, 1000>, 1> channels {};
+    std::array<std::array<float, bufferSize>, 1> channels {};
 
     for (auto& channel: channels)
     {
@@ -22,15 +26,20 @@ auto getDummyArray()
 
 int main()
 {
-    Faust::Module<Faust::Volume> v;
-
-    v.init(44100);
-    v.params["1"] = 1.f;
-
     auto channels = getDummyArray();
-    auto x = &channels[0][0];
+    auto rawChannelsData = &channels[0][0];
 
-    v.compute(1000, &x, &x);
+    Faust::Module<Faust::Volume> volume;
+
+    volume.init(sampleRate);
+    volume.params["1"] = 1.f;
+    volume.compute(bufferSize, &rawChannelsData);
+
+    Faust::Module<Faust::Distortion> distortion;
+
+    distortion.init(sampleRate);
+    distortion.params["1"] = 1.f;
+    distortion.compute(bufferSize, &rawChannelsData);
 
     return 0;
 }

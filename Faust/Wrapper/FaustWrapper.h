@@ -15,6 +15,11 @@ struct Module
         module.compute(count, inputs, outputs);
     }
 
+    void compute(int count, float** inputs) noexcept
+    {
+        compute(count, inputs, inputs);
+    }
+
     Params params;
     ModuleType module;
 };
